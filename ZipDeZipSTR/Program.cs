@@ -1,5 +1,7 @@
-﻿using System.Diagnostics.Metrics;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Metrics;
 using System.Formats.Asn1;
+using System.Text;
 
 namespace ZipDeZipSTR
 {
@@ -7,14 +9,14 @@ namespace ZipDeZipSTR
     {
         static void Main(string[] args)
         {
-            Mystr.Str = "zcccccccczzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzxxxxxxxxxccuikkl";
-
-            Console.WriteLine(Mystr.ZipStr(Mystr.Str));
-
-            Console.WriteLine(Mystr.SerchCountChar());
+            Mystr.Str = "zccczxxxcvxcv";
+            Console.WriteLine(Mystr.Str);
+            Mystr.Str = Mystr.ZipStr(Mystr.Str);
+            Console.WriteLine(Mystr.Str);
+            Mystr.Str = Mystr.DeZipStr(Mystr.Str);
+            Console.WriteLine(Mystr.Str);   
         }
     }
-
 
     public static class Mystr
     {
@@ -47,9 +49,28 @@ namespace ZipDeZipSTR
             return $"{str[0]}{OneElem(counter)}" + ZipStr(str[(counter)..]);//рекурсивный вызов функции 
         }
 
-        public static string DeZipStr()
+        public static string DeZipStr(string str)
         {
-            return "";
+            if (string.IsNullOrEmpty(str))// Если строка пустная воздращаем пустую строку
+                return "";
+
+            var counter = 0;
+            var num = "";
+            StringBuilder tempstr = new StringBuilder();
+
+            foreach(var x in str)
+            {
+                if (char.IsNumber(x))
+                {
+                    while (counter<str.Length && char.IsNumber(str[counter]))
+                        num += str[counter++];
+                    tempstr.Append(new string(str[counter-num.Length-1], Int32.Parse(num)-1));
+                    break;
+                }
+                tempstr.Append(x);
+                counter++;
+            }
+            return $"{tempstr}" + DeZipStr(str[(counter)..]);
         }
 
 
