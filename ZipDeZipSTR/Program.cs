@@ -11,10 +11,18 @@ namespace ZipDeZipSTR
         {
             Mystr.Str = "zccczxxxcvxcv";
             Console.WriteLine(Mystr.Str);
+            Console.WriteLine(Mystr.ZipStrLinq(Mystr.Str));
+
             Mystr.Str = Mystr.ZipStr(Mystr.Str);
             Console.WriteLine(Mystr.Str);
-            Mystr.Str = Mystr.DeZipStr(Mystr.Str);
-            Console.WriteLine(Mystr.Str);   
+
+            Console.WriteLine(Mystr.DeZipStrLinq(Mystr.Str));
+
+
+
+
+            //Mystr.Str = Mystr.DeZipStr(Mystr.Str);
+            //Console.WriteLine(Mystr.Str);   
         }
     }
 
@@ -73,9 +81,45 @@ namespace ZipDeZipSTR
             return $"{tempstr}" + DeZipStr(str[(counter)..]);
         }
 
+        public static string ZipStrLinq(string str)
+        {
+            if (string.IsNullOrEmpty(str))
+                return "";
 
+            var count = str.TakeWhile(x => x == str[0]).Count();
 
+            return $"{str[0]}{OneElem(count)}" + ZipStrLinq(str[(count)..]) ;
+        }
+
+        public static string DeZipStrLinq(string str)
+        {
+            if (string.IsNullOrEmpty(str))
+                return "";
+
+            var count = str.TakeWhile(x => !char.IsDigit(x)).Count();
+
+            if (count == str.Length)// Когда неповторяющий последний символ
+            {
+                return $"{str[..(count)]}";
+            }
  
+            return $"{str[..(count)]}{RepeatChatToStr(str[count - 1], (int)char.GetNumericValue(str[count]) - 1)}" + DeZipStrLinq(str[(count+1)..]);
+        }
+
+        private static string RepeatChatToStr(char symbol, int count)
+        {
+            try
+            {
+                return new string(symbol, count);
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
+
+
     }
 
 }
