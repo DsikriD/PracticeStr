@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Metrics;
 using System.Formats.Asn1;
 using System.Text;
@@ -9,7 +10,9 @@ namespace ZipDeZipSTR
     {
         static void Main(string[] args)
         {
-            Mystr.Str = "zccczxxxcvxcv";
+            Console.WriteLine(Mystr.GetNumber(""));
+            Mystr.Str = "zccczxxxcvxcvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv";
+            Console.WriteLine(Mystr.Str);
             Console.WriteLine(Mystr.Str);
             Console.WriteLine(Mystr.ZipStrLinq(Mystr.Str));
 
@@ -102,8 +105,10 @@ namespace ZipDeZipSTR
             {
                 return $"{str[..(count)]}";
             }
- 
-            return $"{str[..(count)]}{RepeatChatToStr(str[count - 1], (int)char.GetNumericValue(str[count]) - 1)}" + DeZipStrLinq(str[(count+1)..]);
+
+            var number = GetNumber(str[(count)..]);// получаем число символов, если символ 1 то 0,если стракак пустая -1
+
+            return $"{str[..(count)]}{RepeatChatToStr(str[count - 1], number-1)}" + DeZipStrLinq(str[(count+number.ToString().Length)..]);
         }
 
         private static string RepeatChatToStr(char symbol, int count)
@@ -119,7 +124,14 @@ namespace ZipDeZipSTR
         }
 
 
+        public static int GetNumber(string str)
+        {
+            if (string.IsNullOrEmpty(str))
+                return -1;
 
+            int idx = -1;
+            return (int)str.TakeWhile(x=>char.IsNumber(x)).Reverse().Sum(x=>char.GetNumericValue(x)*Math.Pow(10,++idx));
+        }
     }
 
 }
