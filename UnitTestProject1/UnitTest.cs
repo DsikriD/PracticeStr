@@ -143,11 +143,11 @@ namespace UnitTestProject1
             var count = str.TakeWhile(x => !char.IsDigit(x)).Count();
 
             if (count == str.Length)// Когда неповторяющий последний символ
-                return $"{str.Substring(0, count - 1)}";
+                return $"{str.Substring(0, count)}";
 
             var number = GetNumber(str.Substring(count));// получаем число символов, если символ 1 то 0,если страка пустая то -1
 
-            return $"{str.Substring(0, count - 1)}{RepeatChatToStr(str[count - 1], number - 1)}" + DeZipStrLinq(str.Substring(count + number.ToString().Length));
+            return $"{str.Substring(0, count)}{RepeatChatToStr(str[count - 1], number - 1)}" + DeZipStrLinq(str.Substring(count + number.ToString().Length));
         }
 
         private static string RepeatChatToStr(char symbol, int count)
