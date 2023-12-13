@@ -1,4 +1,5 @@
 ﻿using System.Runtime.ConstrainedExecution;
+using System.Threading.Tasks;
 
 namespace mythread
 {
@@ -7,7 +8,8 @@ namespace mythread
         static void Main(string[] args)
         {
 
-            Test.TestTwo();
+            Test.TestThree();
+            //Test.TestTwo();
 
             //Test.TestOne();
 
@@ -47,19 +49,21 @@ namespace mythread
             });
         }
 
-        public static async void TestTwo()
+        public static void TestTwo()
         {
-            ParallelThreeMethod (() => TestMethod1(), () => TestMethod2(), () => TestMethod3());
+            ParallelThreeMethod(() => TestMethod1(), () => TestMethod2(), () => TestMethod3());
             Thread.Sleep(1000);
             Console.WriteLine("The End Test 2");
-            
+
         }
 
-        public static void TestMethod1() { 
+        public static void TestMethod1()
+        {
             Console.WriteLine($"Выполняется метод 1 в потоке {Thread.CurrentThread.ManagedThreadId}");
         }
 
-        public static void TestMethod2() {
+        public static void TestMethod2()
+        {
             while (true)
                 Console.WriteLine($"Выполняется метод 2 в потоке {Thread.CurrentThread.ManagedThreadId}");
         }
@@ -77,6 +81,41 @@ namespace mythread
             });
 
         }
+
+        public static void TestThree()
+        {
+            WaitWork().ContinueWith((Any => StartWork())); // Выполнится после выполнения WaitWork
+            Parallel.Invoke(()=> StartWork(), ()=> StartWork());// Выполняется паралельно WaitWork
+            Console.ReadLine();
+           
+        }
+
+
+        private static async Task WaitWork()
+        {
+           await Task.Run(() =>
+            {
+                int i = 0;
+                while (i<100) {
+                    Console.WriteLine("WaitWork начал работать в потоке:" + Thread.CurrentThread.ManagedThreadId);
+                    i++;
+                }
+                
+            });
+
+        }
+
+        private static async Task StartWork()
+        {
+
+            _ = Task.Run(() =>
+            {
+                    Console.WriteLine("StartWork начал работать в потоке:" + Thread.CurrentThread.ManagedThreadId);
+            });
+          
+        }
+
+
 
     }
 }
